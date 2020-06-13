@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express'
+import { Router } from 'express'
 
 const routes = Router()
 
@@ -7,6 +7,7 @@ import Point from './../controllers/PointController'
 
 routes.get( '/items', Items.index )
 
+routes.get( '/points/:id', Point.show )
 routes.post( '/points', Point.store )
 
 
