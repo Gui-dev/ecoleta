@@ -3,6 +3,20 @@ import knex from './../database/connection'
 
 class PointController {
 
+  async index( request: Request, response: Response ) {
+    const { city, uf, items } = request.query
+    const parseItems = String( items ).split( ',' ).map( item => Number( item.trim() ) )
+    const points = await knex( 'points' )
+      .join( 'point_items', 'points.id', '=', 'point_items.point_id' )
+      .whereIn( 'point_items.item_id', parseItems )
+      .where( 'city', String( city ) )
+      .where( 'uf', String( uf ).toUpperCase() )
+      .distinct()
+      .select( 'points.*' )
+
+    return response.status( 201 ).json( points )
+  }
+
   async store( request: Request, response: Response ) {
 
     const {
@@ -41,6 +55,7 @@ class PointController {
     } )
 
     await trx( 'point_items' ).insert( pointItems )
+    await trx.commit()
 
     return response.status( 201 ).json( {
       id: point_id,
