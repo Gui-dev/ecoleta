@@ -24,15 +24,22 @@ interface IBGECityResponse {
   nome: string
 }
 
-
 const CreatePoint: React.FC = () => {
 
+  const [ initialPosition, setInitialPosition ] = useState<[number, number]>( [ 0, 0 ] )
   const [ items, setItems ] = useState<ItemsProps[]>( [] )
   const [ ufs, setUfs ] = useState<string[]>( [] )
   const [ selectedUf, setSelectedUf ] = useState( '0' )
   const [ cities, setCities ] = useState<string[]>( [] )
   const [ selectedCity, setSelectedCity ] = useState( '0' )
   const [ selectedPosition, setSelectedPosition ] = useState<[number, number]>( [ 0, 0 ] )
+
+  useEffect( () => {
+    navigator.geolocation.getCurrentPosition( position => {
+      const { latitude, longitude } = position.coords
+      setInitialPosition( [ latitude, longitude ] )
+    } )
+  }, [] )
 
   useEffect( () => {
     api.get( '/items' )
@@ -120,7 +127,7 @@ const CreatePoint: React.FC = () => {
           </legend>
 
           <Map 
-            center={ [ -23.7833347, -46.6802013 ] }
+            center={ initialPosition }
             zoom={ 15 }
             onClick={ handleMapClick }
           >
