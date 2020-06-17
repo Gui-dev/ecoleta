@@ -5,6 +5,41 @@
   margin: 0 auto;
 }
 
+.page-create-point-check {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 9;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.page-create-point-check h2 {
+  font-size: 48px;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-top: 10px;
+}
+
+.page-create-point-check span {
+  position: absolute;
+  top: 40px;
+  right: 80px;
+  font-size: 40px;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
 #page-create-point header {
   margin-top: 48px;
 
