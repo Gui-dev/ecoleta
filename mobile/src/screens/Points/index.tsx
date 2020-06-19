@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Image } from 'react-native'
 import { Feather as Icon } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
@@ -6,9 +6,26 @@ import MapView, { Marker } from 'react-native-maps'
 import { SvgUri } from 'react-native-svg'
 import Constants from 'expo-constants'
 
+import api from './../../services/api'
+
+interface ItemsProps {
+  id: number,
+  title: string,
+  image_url: string,
+}
+
 const Points: React.FC = () => {
 
   const navigation = useNavigation()
+  const [ items, setItems ] = useState<ItemsProps[]>( [] )
+  const [ selectedItems, setSelectedItems ] = useState<number[]>( [] )
+
+  useEffect( () => {
+    api.get( '/items' )
+      .then( response => {
+        setItems( response.data )
+      } )
+  }, [] )
 
   const handleNavigateBack = () => {
     navigation.goBack()
@@ -16,6 +33,17 @@ const Points: React.FC = () => {
 
   const handleNavigateToDetail = () => {
     navigation.navigate( 'Detail' )
+  }
+
+  const handleSelectItem = ( id: number ) => {
+    const alreadySelected = selectedItems.findIndex( item => item === id )
+
+    if( alreadySelected >= 0 ) {
+      const filteredItems = selectedItems.filter( item => item !== id )
+      setSelectedItems( filteredItems )
+    } else {
+      setSelectedItems( [ ...selectedItems, id ] )
+    }
   }
 
   return (
@@ -68,45 +96,20 @@ const Points: React.FC = () => {
           showsHorizontalScrollIndicator={ false }
           contentContainerStyle={ { paddingHorizontal: 25 } }
         >
-          <TouchableOpacity style={ styles.item } onPress={ () => {} }>
-            <SvgUri width={42} height={42} uri="http://192.168.0.105:3333/uploads/oleo.svg"/>
-            <Text style={ styles.itemTitle }>Óleo</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={ styles.item } onPress={ () => {} }>
-            <SvgUri width={42} height={42} uri="http://192.168.0.105:3333/uploads/oleo.svg"/>
-            <Text style={ styles.itemTitle }>Óleo</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={ styles.item } onPress={ () => {} }>
-            <SvgUri width={42} height={42} uri="http://192.168.0.105:3333/uploads/oleo.svg"/>
-            <Text style={ styles.itemTitle }>Óleo</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={ styles.item } onPress={ () => {} }>
-            <SvgUri width={42} height={42} uri="http://192.168.0.105:3333/uploads/oleo.svg"/>
-            <Text style={ styles.itemTitle }>Óleo</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={ styles.item } onPress={ () => {} }>
-            <SvgUri width={42} height={42} uri="http://192.168.0.105:3333/uploads/oleo.svg"/>
-            <Text style={ styles.itemTitle }>Óleo</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={ styles.item } onPress={ () => {} }>
-            <SvgUri width={42} height={42} uri="http://192.168.0.105:3333/uploads/oleo.svg"/>
-            <Text style={ styles.itemTitle }>Óleo</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={ styles.item } onPress={ () => {} }>
-            <SvgUri width={42} height={42} uri="http://192.168.0.105:3333/uploads/oleo.svg"/>
-            <Text style={ styles.itemTitle }>Óleo</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={ styles.item } onPress={ () => {} }>
-            <SvgUri width={42} height={42} uri="http://192.168.0.105:3333/uploads/oleo.svg"/>
-            <Text style={ styles.itemTitle }>Óleo</Text>
-          </TouchableOpacity>
+          { items.map( item => (
+            <TouchableOpacity 
+              key={ String( item.id ) }
+              style={ [ 
+                styles.item,
+                selectedItems.includes( item.id ) ? styles.selectedItem : {}
+              ] } 
+              activeOpacity={ 0.6 }
+              onPress={ () => handleSelectItem( item.id ) }
+            >
+              <SvgUri width={42} height={42} uri={ item.image_url }/>
+              <Text style={ styles.itemTitle }>{ item.title }</Text>
+            </TouchableOpacity>    
+          ) ) }
 
         </ScrollView>
 
