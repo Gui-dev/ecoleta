@@ -1,16 +1,50 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity, Image, SafeAreaView, StyleSheet } from 'react-native'
 import { RectButton } from 'react-native-gesture-handler'
 import { Feather as Icon, FontAwesome } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
+
+import api from './../../services/api'
+
+interface Params {
+  id: number,
+}
+
+interface Data {
+  point: {
+    name: string,
+    email: string,
+    whatsapp: string,
+    image: string,
+    city: string,
+    uf: string,
+  },
+  items: { title: string, }[],
+}
 
 const Detail: React.FC = () => {
 
   const navigation = useNavigation()
+  const route = useRoute()
+  const { id } = route.params as Params
 
+  const [ data, setData ] = useState<Data>( {} as Data )
+
+  useEffect( () => {
+    api.get( `/points/${id}` )
+      .then(  response => {
+        setData( response.data )
+      } )
+  }, [] )
+  
   const handleNavigateGoBack = () => {
     navigation.goBack()
   }
+
+  if( !data.point ) {
+    return null
+  }
+
 
   return (
     <SafeAreaView style={ { flex: 1 } }>
@@ -22,16 +56,18 @@ const Detail: React.FC = () => {
         <Image 
           style={ styles.pointImage }
           source={ {
-            uri: 'https://images.unsplash.com/photo-1556767576-5ec41e3239ea?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60'
+            uri: data.point.image
           } }
         />
 
-        <Text style={ styles.pointName }>Mercado da Esquina</Text>
-        <Text style={ styles.pointItems }>Lâmpadas, Óleo, Papelão</Text>
+        <Text style={ styles.pointName }>{ data.point.name }</Text>
+        <Text style={ styles.pointItems }>
+          { data.items.map( item => item.title ).join( ',' ) }
+        </Text>
 
         <View style={ styles.address }>
           <Text style={ styles.addressTitle }>Endereço</Text>
-          <Text style={ styles.addressContent }>São Paulo, SP</Text>
+          <Text style={ styles.addressContent }>{ data.point.city }, { data.point.uf }</Text>
         </View>
       </View>
 
