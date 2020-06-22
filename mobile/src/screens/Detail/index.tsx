@@ -17,6 +17,7 @@ interface Data {
     email: string,
     whatsapp: string,
     image: string,
+    image_url: string,
     city: string,
     uf: string,
   },
@@ -68,7 +69,7 @@ const Detail: React.FC = () => {
         <Image 
           style={ styles.pointImage }
           source={ {
-            uri: data.point.image
+            uri: data.point.image_url
           } }
         />
 
