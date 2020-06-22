@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, Image, SafeAreaView, Linking, StyleSheet } from 'react-native'
+import { ActivityIndicator, View, Text, TouchableOpacity, Image, SafeAreaView, Linking, StyleSheet } from 'react-native'
 import { RectButton } from 'react-native-gesture-handler'
 import { Feather as Icon, FontAwesome } from '@expo/vector-icons'
 import { useNavigation, useRoute } from '@react-navigation/native'
@@ -12,7 +12,7 @@ interface Params {
 }
 
 interface Data {
-  point: {
+  serializePoint: {
     name: string,
     email: string,
     whatsapp: string,
@@ -46,18 +46,25 @@ const Detail: React.FC = () => {
   const handleComposeMail = () => {
     MailComposer.composeAsync( {
       subject: 'Interesse na coleta de resíduos',
-      recipients: [ data.point.email ],
+      recipients: [ data.serializePoint.email ],
     } )
   }
 
   const handleWhatsapp = () => {
-    Linking.openURL( `whatsapp://send?phone=${data.point.whatsapp}&text=Tenho interesse sobre coleta de resíduos` )
+    Linking.openURL( `whatsapp://send?phone=${data.serializePoint.whatsapp}&text=Tenho interesse sobre coleta de resíduos` )
   }
 
-  if( !data.point ) {
-    return null
+  if( !data.serializePoint ) {
+    return (
+      <View style={ {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      } }>
+        <ActivityIndicator size="large" color="#000"/>
+      </View>
+    )
   }
-
 
   return (
     <SafeAreaView style={ { flex: 1 } }>
@@ -69,18 +76,18 @@ const Detail: React.FC = () => {
         <Image 
           style={ styles.pointImage }
           source={ {
-            uri: data.point.image_url
+            uri: data.serializePoint.image_url
           } }
         />
 
-        <Text style={ styles.pointName }>{ data.point.name }</Text>
+        <Text style={ styles.pointName }>{ data.serializePoint.name }</Text>
         <Text style={ styles.pointItems }>
           { data.items.map( item => item.title ).join( ', ' ) }
         </Text>
 
         <View style={ styles.address }>
           <Text style={ styles.addressTitle }>Endereço</Text>
-          <Text style={ styles.addressContent }>{ data.point.city }, { data.point.uf }</Text>
+          <Text style={ styles.addressContent }>{ data.serializePoint.city }, { data.serializePoint.uf }</Text>
         </View>
       </View>
 
