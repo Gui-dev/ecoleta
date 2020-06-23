@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import { resolve } from 'path'
+import { errors } from 'celebrate'
 
 import routes from './routes'
 
@@ -14,6 +15,7 @@ class App {
 
     this.middlewares()
     this.routes()
+    this.handleException()
   }
 
   private middlewares(): void {
@@ -24,6 +26,10 @@ class App {
 
   private routes(): void {
     this.app.use( routes )
+  }
+
+  private handleException(): void {
+    this.app.use( errors() )
   }
 }
 
